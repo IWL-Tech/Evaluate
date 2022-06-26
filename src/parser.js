@@ -450,6 +450,10 @@ export function Parse(tokens, func, verbose=false) {
 			ParseStack.pop()
 			return current += 1
 			*/
+
+			current++
+			ParseStack.pop()
+			return
 		}
 		if (element.ident == 10) {
 			ParseStack.push("mset", line)
@@ -539,6 +543,33 @@ export function Parse(tokens, func, verbose=false) {
 
 			ParseStack.pop()
 			return;
+		}
+
+		if (element.ident == 13) {
+			ParseStack.push(tokens[current - 1].char + " assignment", line)
+
+			let v = tokens[current - 1].char
+			tokens[current].read = true
+			current++
+
+			push({
+				type: "memory",
+				kind: "reset",
+				declarations: {
+					id: {
+						name: v
+					},
+					init: {
+						value: tokens[current].char
+					}
+				}
+			})
+
+			tokens[current].read = true
+			current++
+
+			ParseStack.pop()
+			return
 		}
 
 		throw new CompilationError("UnnexpectedKeyword", "Unnexpected keyword " + element.char + " was identified.", line, ParseTrace(ParseStack))
