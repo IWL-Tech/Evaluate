@@ -1,3 +1,7 @@
 import standard
 
-simplify("")
+String a = "hello"
+printf("{a}\n")
+
+a = "bye"
+printf("{a}\n")

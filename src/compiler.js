@@ -160,9 +160,9 @@ export function Compile(AST, unit, verbose, compiled, output) {
 				if (element.kind === 'reset') {
 					RuntimeStack.push('assign', line)
 					if (!Symbols[element.declarations.id.name]) throw new RuntimeError("VariableNotFound", `Variable ${element.declarations.id.name} was not found.`, line, ParseTrace(RuntimeStack))
-					if (!Symbols[element.declarations.id.name].type.startsWith(element.annotation)) throw new RuntimeError("InsufficientValue", "The given value did not meet the annotation's requirements.", line, ParseTrace(RuntimeStack))
+					if (!Symbols[element.declarations.id.name].type.startsWith(element.declarations.annotation)) throw new RuntimeError("InsufficientValue", "The given value did not meet the annotation's requirements.", line, ParseTrace(RuntimeStack))
 					let code;
-					if (element.annotation === "string") code = declare.execute("string", element.declarations.id.name, element.declarations.init.value, true)
+					if (element.declarations.annotation === "string") code = declare.execute("string", element.declarations.id.name, element.declarations.init.value, true, current)
 					else code = declare.execute("int64", element.declarations.id.name, element.declarations.init.value, true)
 					code.forEach(e => ans.push(e))
 					current++
@@ -238,7 +238,7 @@ export function Compile(AST, unit, verbose, compiled, output) {
 							break;
 
 						case 'String':
-							code = declare.execute("string", element.declarations.id.name, element.declarations.init.value)
+							code = declare.execute("string", element.declarations.id.name, element.declarations.init.value, false, current)
 							Symbols[element.declarations.id.name] = {
 								type: "string",
 							}

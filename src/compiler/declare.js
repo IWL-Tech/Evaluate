@@ -3,7 +3,7 @@ import { cosDependencies } from "mathjs";
 export default {
   name: "declare",
   description: "declares memory",
-  execute(annotation, id, value, short) { 
+  execute(annotation, id, value, short, current) { 
     let c;
     switch (annotation) {
       case "char":
@@ -133,15 +133,17 @@ export default {
           },
           {
             type: "label",
-            label: id+"label",
+            label: id+"label"+current,
             commands: `
+                mov eax,0
+                mov [${id}], eax
                 db "${value}",0
             `,
             os: ["mac", "win", "linux"],
           },
           {
             type: "label",
-            label: id+"len",
+            label: id+"len"+current,
             commands: "equ " + value.length,
             os: ['mac','win','linux'],
             requires: "ascii"
@@ -149,15 +151,15 @@ export default {
           {
               type: "text",
               commands: `
-                mov ebx, ${id}label\n
+                mov ebx, ${id}label${current}\n
                 mov ecx, 0\n
-                call ${id}loop\n
+                call ${id}loop${current}\n
               `,
               os: ['win', 'macos', 'linux']
           },
           {
               type: "label",
-              label: id+"loop",
+              label: id+"loop"+current,
               commands: `
                 mov al, [ebx]\n
                 or al,al\n
@@ -170,7 +172,7 @@ export default {
 
                 inc ebx\n
                 inc ecx\n
-                jmp ${id}loop\n
+                jmp ${id}loop${current}\n
               `,
               os: ['win', 'linux', 'macos']
           },
