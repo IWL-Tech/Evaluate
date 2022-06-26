@@ -552,6 +552,14 @@ export function Parse(tokens, func, verbose=false) {
 			tokens[current].read = true
 			current++
 
+			let annotation = ""
+			if (tokens[current].ident == 18) annotation = "string"
+			else if (tokens[current].ident == 11) {
+				if (tokens[current].char == "true" || tokens[current].char == "false") annotation = "bool" 
+				else annotation = "term"
+			}
+			else if (tokens[current].ident == 31) annotation = "int"
+
 			push({
 				type: "memory",
 				kind: "reset",
@@ -561,7 +569,8 @@ export function Parse(tokens, func, verbose=false) {
 					},
 					init: {
 						value: tokens[current].char
-					}
+					},
+					annotation: annotation
 				}
 			})
 
