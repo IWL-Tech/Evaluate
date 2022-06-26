@@ -209,7 +209,7 @@ export const Ident = {
 	MEMSET: 10,
 	TERM: 11,
 	MEMCLR: 12,
-	EQUALS: 13,
+	ASSIGNMENT: 13,
 	LBRACKET: 14,
 	RBRACKET: 15,
 	LSBRACKET: 16,

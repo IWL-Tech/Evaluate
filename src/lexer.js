@@ -96,7 +96,7 @@ export function Lexer(script) {
 					idents.push({char: char, ident: Ident.NOT, classify: Classify.BOOLEAN})
 					break;
 				case '=':
-					idents.push({char: char, ident: Ident.EQUALS, classify: Classify.MEMORY})
+					idents.push({char: char, ident: Ident.ASSIGNMENT, classify: Classify.MEMORY})
 					break;
 				case '=>':
 					idents.push({char: char, ident: Ident.INITFUNC, classify: Classify.FUNCTION})
