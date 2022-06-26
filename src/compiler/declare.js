@@ -1,10 +1,13 @@
+import { cosDependencies } from "mathjs";
+
 export default {
   name: "declare",
   description: "declares memory",
-  execute(annotation, id, value) { 
+  execute(annotation, id, value, short) { 
+    let c;
     switch (annotation) {
       case "char":
-        return [
+        c = [
           {
             type: "bss",
             id: id,
@@ -25,8 +28,9 @@ export default {
             requires: "ascii"
           },
         ];
+        break;
       case "int8":
-        return [
+        c = [
           {
             type: "bss",
             id: id,
@@ -47,8 +51,9 @@ export default {
             os: ["mac", "win", "linux"],
           },
         ];
+        break;
       case "int16":
-        return [
+        c = [
           {
             type: "bss",
             id: id,
@@ -69,8 +74,9 @@ export default {
             os: ["mac", "win", "linux"],
           },
         ];
+        break;
       case "int32":
-        return [
+        c = [
           {
             type: "bss",
             id: id,
@@ -91,8 +97,9 @@ export default {
             os: ["mac", "win", "linux"],
           },
         ];
+        break;
       case "int64":
-        return [
+        c = [
           {
             type: "bss",
             id: id,
@@ -113,9 +120,10 @@ export default {
             os: ["mac", "win", "linux"],
           },
         ];
+        break;
       case "string":
         // Null termination be like
-        return [
+        c = [
           {
             type: "bss",
             id: id,
@@ -167,6 +175,11 @@ export default {
               os: ['win', 'linux', 'macos']
           },
         ];
+        break;
     }
+
+    if (short) c.forEach(e => { if (e.type === "bss") c.splice(c.indexOf(e), 1) })
+
+    return c
   },
 };
