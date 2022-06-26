@@ -21,7 +21,7 @@ export default function outputfunc(args, line, trace, compiled, id) {
 				ret.push({commands: `mov eax,4\nmov ebx,1\nmov ecx,printf${id}${counter}\nmov edx,printf${id}len${counter}\nint 0x80\n`, type: "text", os: ['win', 'linux']})
 				ret.push({commands: `mov eax,0x20000004\nmov ebx,0x20000001\nmov ecx,printf${id}${counter}\nmov edx,printf${id}len${counter}\nint 0x80\n`, type: "text", os: ['mac']})
 			} else if (l === '{') {
-				concat = true
+				concat = true 
 			} else if (l === '}') {
 				concat = false
 			} else if (l === '\\a') {
@@ -91,8 +91,14 @@ export default function outputfunc(args, line, trace, compiled, id) {
 				ret.push({commands: `mov eax,0x20000004\nmov ebx,0x20000001\nmov ecx,printf${id}${counter}\nmov edx,printf${id}len${counter}\nint 0x80\n`, type: "text", os: ['mac']})
 			} else {
 				if (concat) {
-					ret.push({commands: `mov eax,4\nmov ebx,1\nmov ecx,${l}\nmov edx,${l}len\nint 0x80\n`, type: "text", os: ['win', 'linux']})
-					ret.push({commands: `mov eax,0x20000004\nmov ebx,0x20000001\nmov ecx,${l}\nmov edx,${l}len\nint 0x80\n`, type: "text", os: ['mac']})
+					ret.push({type: "bss", id: "printf"+id+"len"+counter, bytes: 4, mode: "resb", os: ['win', 'linux', 'mac'], requires: "ascii"})
+					ret.push({type: "text", commands: `
+						mov rdi, ${l}
+						call _strlen
+						mov [${"printf"+id+"len"+counter}], rax
+					`, os: ['mac', 'win', 'linux']})
+					ret.push({commands: `mov eax,4\nmov ebx,1\nmov ecx,${l}\nmov edx,${"printf"+id+"len"+counter}\nint 0x80\n`, type: "text", os: ['win', 'linux']})
+					ret.push({commands: `mov eax,0x20000004\nmov ebx,0x20000001\nmov ecx,${l}\nmov edx,${"printf"+id+"len"+counter}\nint 0x80\n`, type: "text", os: ['mac']})
 				} else {
 					if (compiled == "elf32") {
 						let len = Nullify(parseMemoryAddress((ToHex(l).length / 2),0))
